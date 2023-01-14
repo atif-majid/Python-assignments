@@ -1,56 +1,84 @@
 class Student:
-    def __init__(self):
-        self.firstname = input("Enter first name: ")
-        self.lastname = input("Enter last name: ")
-        self.allmarks = []
-        
-    
-    def setmarks(self, nSemester, nSubjects):
-        sem_marks = []
-        for i in range(1, nSubjects+1):
-            nCreditHours = int(input(f"Enter credit hours for subject {i} in semester {nSemester}: "))
-            nGrades=int(input(f"Enter grades for subject {i} in semester {nSemester}: "))
-            sem_marks.append({"credit_hours":nCreditHours, "Grades": nGrades})
-        self.allmarks.append(sem_marks)
+    def __init__(self, name):
+        self.name = name
+        self.semesters = []
 
-    def findgpa(self):
-        print(f"Studnet Name: {self.firstname} {self.lastname}")
-        nAllGPA = 0
-        SemCount = 1
-        for semmarks in self.allmarks:
-            nTotalPoints = 0
-            nTotalHours = 0
-            for marks in semmarks:
-                nSubjectGrade = marks['Grades']
-                nSubjectHours = marks['credit_hours']
-                nTotalPoints = nTotalPoints + (nSubjectGrade * nSubjectHours)
-                nTotalHours = nTotalHours + nSubjectHours
-            gpa = nTotalPoints/nTotalHours
-            print(f"GPA for Semester {SemCount}: {gpa}")
-            nAllGPA = nAllGPA + gpa
-        cgpa = nAllGPA/len(self.allmarks)
-        print(f"CGPA of {self.firstname} {self.lastname}: {nAllGPA}")
+    def add_semester(self, semester):
+        self.semesters.append(semester)
+
+    def calculate_gpa(self):
+        total_credits = 0
+        total_points = 0
+        for semester in self.semesters:
+            for course in semester.courses:
+                total_credits += course.credits
+                total_points += course.points
+        if total_credits > 0:
+            return total_points / total_credits
+        else:
+            return None
 
 
-students = []
-nStudents = int(input("Enter number of students: "))
-for i in range(0, nStudents):
-    print(f"Student: {i+1}")
-    tempStudent = Student()
-    students.append(tempStudent)
+class Semester:
+    def __init__(self, name):
+        self.name = name
+        self.courses = []
+
+    def add_course(self, course):
+        self.courses.append(course)
+
+    def calculate_gpa(self):
+        total_credits = 0
+        total_points = 0
+        for course in self.courses:
+            total_credits += course.credits
+            total_points += course.points
+        if total_credits > 0:
+            return total_points / total_credits
+        else:
+            return None
 
 
-nSemesters = int(input("Enter number of Semesters: "))
-for i in range(0, nSemesters):
-    nSubjects = int(input(f"Enter number of subjects in semester {i+1}: "))
-    for tempStudent in students:
-        tempStudent.setmarks(i+1 ,nSubjects)
+class Course:
+    def __init__(self, name, code, credits, grade):
+        self.name = name
+        self.code = code
+        self.credits = credits
+        self.grade = grade
+
+    def get_points(self):
+        if self.grade == "A":
+            return 4 * self.credits
+        elif self.grade == "B":
+            return 3 * self.credits
+        elif self.grade == "C":
+            return 2 * self.credits
+        elif self.grade == "D":
+            return self.credits
+        else:
+            return 0
+
+    def points(self):
+        return self.get_points()
 
 
-for tempStudent in students:
-    tempStudent.findgpa()
+# create a student
+student = Student("Alice")
 
-#for i in range(1, nSemesters+1):
-#    for j in range(0, nStudents):
+# create semesters
+fall_semester = Semester("Fall")
+spring_semester = Semester("Spring")
 
-    
+# add courses to semesters
+fall_semester.add_course(Course("Calculus", "MATH-101", 4, "A"))
+fall_semester.add_course(Course("Computer Science", "CSC-101", 3, "B"))
+spring_semester.add_course(Course("Physics", "PHY-101", 3, "C"))
+spring_semester.add_course(Course("Biology", "BIO-101", 4, "A"))
+
+# add semesters to student
+student.add_semester(fall_semester)
+student.add_semester(spring_semester)
+
+# calculate student's GPA
+gpa = student.calculate_gpa()
+print("Student's GPA:", gpa)
