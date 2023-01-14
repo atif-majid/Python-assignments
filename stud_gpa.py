@@ -12,7 +12,7 @@ class Student:
         for semester in self.semesters:
             for course in semester.courses:
                 total_credits += course.credits
-                total_points += course.points
+                total_points += course.points()
         if total_credits > 0:
             return total_points / total_credits
         else:
@@ -32,7 +32,7 @@ class Semester:
         total_points = 0
         for course in self.courses:
             total_credits += course.credits
-            total_points += course.points
+            total_points += course.points()
         if total_credits > 0:
             return total_points / total_credits
         else:
